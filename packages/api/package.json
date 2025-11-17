@@ -1,0 +1,33 @@
+{
+  "name": "@lective/api",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "default": "./src/index.ts"
+    },
+    "./*": {
+      "types": "./dist/*.d.ts",
+      "default": "./src/*.ts"
+    }
+  },
+  "type": "module",
+  "scripts": {
+    "build": "tsdown"
+  },
+  "devDependencies": {
+    "tsdown": "catalog:",
+    "@lective/config": "workspace:*"
+  },
+  "peerDependencies": {
+    "typescript": "^5"
+  },
+  "dependencies": {
+    "@trpc/server": "catalog:",
+    "@trpc/client": "catalog:",
+    "hono": "catalog:",
+    "drizzle-orm": "catalog:",
+    "dotenv": "catalog:",
+    "zod": "catalog:",
+    "@lective/db": "workspace:*"
+  }
+}
