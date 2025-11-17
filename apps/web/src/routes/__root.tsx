@@ -1,4 +1,4 @@
-import type { QueryClient } from "@tanstack/react-query";
+import { type QueryClient, useSuspenseQuery } from "@tanstack/react-query";
 import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
 import {
   createRootRouteWithContext,
@@ -6,10 +6,10 @@ import {
   Outlet,
 } from "@tanstack/react-router";
 import { TanStackRouterDevtools } from "@tanstack/react-router-devtools";
-import { ThemeProvider } from "@/components/theme-provider";
-import { Toaster } from "@/components/ui/sonner";
-import type { trpc } from "@/utils/trpc";
+import { trpc } from "@/utils/trpc";
 import "../index.css";
+import { OnboardingDialog } from "@/components/onboarding-dialog";
+import { ToastProvider } from "@/components/ui/toast";
 
 export type RouterAppContext = {
   trpc: typeof trpc;
@@ -35,23 +35,27 @@ export const Route = createRootRouteWithContext<RouterAppContext>()({
       },
     ],
   }),
+  beforeLoad: async ({ context }) => {
+    await context.queryClient.ensureQueryData(
+      context.trpc.subject.getMany.queryOptions()
+    );
+  },
 });
 
 function RootComponent() {
+  const { data: subjects } = useSuspenseQuery(
+    trpc.subject.getMany.queryOptions()
+  );
+
   return (
     <>
       <HeadContent />
-      <ThemeProvider
-        attribute="class"
-        defaultTheme="dark"
-        disableTransitionOnChange
-        storageKey="vite-ui-theme"
-      >
+      <ToastProvider>
+        {subjects.length <= 0 && <OnboardingDialog />}
         <div>
           <Outlet />
         </div>
-        <Toaster richColors />
-      </ThemeProvider>
+      </ToastProvider>
       <TanStackRouterDevtools position="bottom-left" />
       <ReactQueryDevtools buttonPosition="bottom-right" position="bottom" />
     </>
