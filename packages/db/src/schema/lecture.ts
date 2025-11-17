@@ -1,6 +1,7 @@
 import { relations } from "drizzle-orm";
 import { sqliteTable, text } from "drizzle-orm/sqlite-core";
 import { createdAt, id } from "../helpers";
+import { note } from "./note";
 import { subject } from "./subject";
 
 export const lecture = sqliteTable("lecture", {
@@ -11,9 +12,10 @@ export const lecture = sqliteTable("lecture", {
   createdAt: createdAt(),
 });
 
-export const lectureRelations = relations(lecture, ({ one }) => ({
+export const lectureRelations = relations(lecture, ({ one, many }) => ({
   subject: one(subject, {
     fields: [lecture.subjectId],
     references: [subject.id],
   }),
+  notes: many(note),
 }));

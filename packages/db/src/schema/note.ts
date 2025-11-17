@@ -10,7 +10,7 @@ export const note = sqliteTable("note", {
   tags: text("tags"),
 });
 
-export const lectureRelations = relations(note, ({ one }) => ({
+export const noteRelations = relations(note, ({ one }) => ({
   lecture: one(lecture, {
     fields: [note.lectureId],
     references: [lecture.id],
