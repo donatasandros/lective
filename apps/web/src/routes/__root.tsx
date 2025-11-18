@@ -4,13 +4,15 @@ import {
   createRootRouteWithContext,
   HeadContent,
   Outlet,
+  redirect,
 } from "@tanstack/react-router";
 import { TanStackRouterDevtools } from "@tanstack/react-router-devtools";
 import { trpc } from "@/utils/trpc";
 import "../index.css";
 import { ThemeProvider } from "next-themes";
+import { AddSubjectDialog } from "@/components/add-subject-dialog";
 import { Header } from "@/components/header";
-import { OnboardingDialog } from "@/components/onboarding-dialog";
+import { SubjectList } from "@/components/subject-list";
 import { ToastProvider } from "@/components/ui/toast";
 
 export type RouterAppContext = {
@@ -37,10 +39,19 @@ export const Route = createRootRouteWithContext<RouterAppContext>()({
       },
     ],
   }),
-  beforeLoad: async ({ context }) => {
-    await context.queryClient.ensureQueryData(
+  beforeLoad: async ({ context, location }) => {
+    const data = await context.queryClient.ensureQueryData(
       context.trpc.subject.getMany.queryOptions()
     );
+
+    if (data.length > 0 && location.pathname === "/") {
+      throw redirect({
+        to: "/subject/$id",
+        params: {
+          id: data[0].id,
+        },
+      });
+    }
   },
 });
 
@@ -58,10 +69,13 @@ function RootComponent() {
         disableTransitionOnChange
       >
         <ToastProvider>
-          {subjects.length <= 0 && <OnboardingDialog />}
-          <div>
+          {subjects.length <= 0 && <AddSubjectDialog isOnboarding />}
+          <div className="min-h-[calc(100vh-64px)]">
             <Header />
-            <Outlet />
+            <div className="flex min-h-[calc(100vh-64px)]">
+              <SubjectList />
+              <Outlet />
+            </div>
           </div>
         </ToastProvider>
       </ThemeProvider>

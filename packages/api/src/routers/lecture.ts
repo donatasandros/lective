@@ -1,5 +1,5 @@
 import { db } from "@lective/db";
-import { lecture } from "@lective/db/schema/lecture";
+import { lecture } from "@lective/db/schema/index";
 import { eq } from "drizzle-orm";
 import z from "zod";
 import { publicProcedure, router } from "../index";
