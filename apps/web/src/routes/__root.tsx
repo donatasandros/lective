@@ -8,6 +8,8 @@ import {
 import { TanStackRouterDevtools } from "@tanstack/react-router-devtools";
 import { trpc } from "@/utils/trpc";
 import "../index.css";
+import { ThemeProvider } from "next-themes";
+import { Header } from "@/components/header";
 import { OnboardingDialog } from "@/components/onboarding-dialog";
 import { ToastProvider } from "@/components/ui/toast";
 
@@ -50,12 +52,19 @@ function RootComponent() {
   return (
     <>
       <HeadContent />
-      <ToastProvider>
-        {subjects.length <= 0 && <OnboardingDialog />}
-        <div>
-          <Outlet />
-        </div>
-      </ToastProvider>
+      <ThemeProvider
+        attribute="class"
+        defaultTheme="light"
+        disableTransitionOnChange
+      >
+        <ToastProvider>
+          {subjects.length <= 0 && <OnboardingDialog />}
+          <div>
+            <Header />
+            <Outlet />
+          </div>
+        </ToastProvider>
+      </ThemeProvider>
       <TanStackRouterDevtools position="bottom-left" />
       <ReactQueryDevtools buttonPosition="bottom-right" position="bottom" />
     </>
