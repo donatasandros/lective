@@ -1,6 +1,7 @@
 import { db } from "@lective/db";
 import { subject } from "@lective/db/schema/index";
 import { TRPCError } from "@trpc/server";
+import { eq } from "drizzle-orm";
 import z from "zod";
 import { publicProcedure, router } from "../index";
 
@@ -17,6 +18,25 @@ export const subjectRouter = router({
         },
       })
   ),
+  getOneById: publicProcedure
+    .input(z.object({ id: z.uuid() }))
+    .query(async ({ input }) => {
+      const foundSubject = await db.query.subject.findFirst({
+        where: eq(subject.id, input.id),
+        with: {
+          lectures: true,
+        },
+      });
+
+      if (!foundSubject) {
+        throw new TRPCError({
+          code: "NOT_FOUND",
+          message: "Subject not found",
+        });
+      }
+
+      return foundSubject;
+    }),
   create: publicProcedure
     .input(z.object({ name: z.string().min(1) }))
     .mutation(async ({ input }) => {

@@ -29,7 +29,10 @@ export function OnboardingDialog() {
 
         queryClient.invalidateQueries(trpc.subject.getMany.queryOptions());
 
-        router.navigate({ to: "/subject/$id", params: { id: data.id } });
+        router.navigate({
+          to: "/subject/$subjectId",
+          params: { subjectId: data.id },
+        });
       },
       onError: (error) => {
         toastManager.add({

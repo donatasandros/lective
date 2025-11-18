@@ -1,12 +1,10 @@
 import { type QueryClient, useSuspenseQuery } from "@tanstack/react-query";
-import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
 import {
   createRootRouteWithContext,
   HeadContent,
   Outlet,
   redirect,
 } from "@tanstack/react-router";
-import { TanStackRouterDevtools } from "@tanstack/react-router-devtools";
 import { trpc } from "@/utils/trpc";
 import "../index.css";
 import { ThemeProvider } from "next-themes";
@@ -46,9 +44,9 @@ export const Route = createRootRouteWithContext<RouterAppContext>()({
 
     if (data.length > 0 && location.pathname === "/") {
       throw redirect({
-        to: "/subject/$id",
+        to: "/subject/$subjectId",
         params: {
-          id: data[0].id,
+          subjectId: data[0].id,
         },
       });
     }
@@ -79,8 +77,8 @@ function RootComponent() {
           </div>
         </ToastProvider>
       </ThemeProvider>
-      <TanStackRouterDevtools position="bottom-left" />
-      <ReactQueryDevtools buttonPosition="bottom-right" position="bottom" />
+      {/*<TanStackRouterDevtools position="bottom-left" />*/}
+      {/*<ReactQueryDevtools buttonPosition="bottom-right" position="bottom" />*/}
     </>
   );
 }

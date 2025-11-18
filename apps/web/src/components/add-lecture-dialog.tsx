@@ -19,37 +19,40 @@ import { Form } from "./ui/form";
 import { Input } from "./ui/input";
 import { toastManager } from "./ui/toast";
 
-type AddSubjectDialogProps = {
-  isOnboarding?: boolean;
+type AddLectureDialogProps = {
+  subjectId: string;
 };
 
-export function AddSubjectDialog({
-  isOnboarding = false,
-}: AddSubjectDialogProps) {
+export function AddLectureDialog({ subjectId }: AddLectureDialogProps) {
   const router = useRouter();
   const [isOpen, setIsOpen] = useState(false);
 
-  const createSubject = useMutation(
-    trpc.subject.create.mutationOptions({
+  const createLecture = useMutation(
+    trpc.lecture.create.mutationOptions({
       onSuccess: (data) => {
         setIsOpen(false);
 
         toastManager.add({
-          title: "Subject created",
-          description: "Your subject has been successfully created.",
+          title: "Lecture created",
+          description: "Your lecture has been successfully created.",
           type: "success",
         });
 
         queryClient.invalidateQueries(trpc.subject.getMany.queryOptions());
+        queryClient.invalidateQueries(
+          trpc.subject.getOneById.queryOptions({
+            id: subjectId,
+          })
+        );
 
         router.navigate({
-          to: "/subject/$subjectId",
-          params: { subjectId: data.id },
+          to: "/subject/$subjectId/lecture/$lectureId",
+          params: { subjectId, lectureId: data.id },
         });
       },
       onError: (error) => {
         toastManager.add({
-          title: "Error creating subject",
+          title: "Error creating lecture",
           description: error.message,
           type: "error",
         });
@@ -61,43 +64,41 @@ export function AddSubjectDialog({
     e.preventDefault();
     const formData = new FormData(e.currentTarget);
 
-    await createSubject.mutateAsync({
-      name: formData.get("name") as string,
+    await createLecture.mutateAsync({
+      title: formData.get("title") as string,
+      subjectId,
     });
   };
 
   return (
-    <Dialog onOpenChange={setIsOpen} open={isOnboarding ? true : isOpen}>
-      {!isOnboarding && (
-        <DialogTrigger
-          render={<Button className="w-full" size="lg" variant="outline" />}
-        >
-          <PlusIcon /> New Subject
-        </DialogTrigger>
-      )}
-      <DialogPopup className="sm:max-w-sm" showCloseButton={!isOnboarding}>
+    <Dialog onOpenChange={setIsOpen} open={isOpen}>
+      <DialogTrigger render={<Button className="w-full" size="lg" />}>
+        <PlusIcon /> New Lecture
+      </DialogTrigger>
+      <DialogPopup className="sm:max-w-sm">
         <Form onSubmit={onSubmit}>
           <DialogHeader>
-            <DialogTitle>Create a subject</DialogTitle>
+            <DialogTitle>Create lecture</DialogTitle>
             <DialogDescription>
-              Add a subject to start organizing your lectures and notes. You can
-              edit or remove it anytime.
+              Add a lecture to start organizing your notes.
             </DialogDescription>
           </DialogHeader>
           <div className="flex flex-col gap-4">
             <Field>
-              <FieldLabel>Subject name</FieldLabel>
-              <Input name="name" placeholder="Enter subject name" type="text" />
+              <FieldLabel>Lecture name</FieldLabel>
+              <Input
+                name="title"
+                placeholder="Enter lecture name"
+                type="text"
+              />
             </Field>
           </div>
           <DialogFooter>
-            {!isOnboarding && (
-              <DialogClose render={<Button variant="ghost" />}>
-                Cancel
-              </DialogClose>
-            )}
-            <Button disabled={createSubject.isPending} type="submit">
-              Create subject
+            <DialogClose render={<Button variant="ghost" />}>
+              Cancel
+            </DialogClose>
+            <Button disabled={createLecture.isPending} type="submit">
+              Create lecture
             </Button>
           </DialogFooter>
         </Form>
