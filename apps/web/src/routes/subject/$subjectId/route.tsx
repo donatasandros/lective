@@ -14,7 +14,7 @@ export const Route = createFileRoute("/subject/$subjectId")({
 
 function RouteComponent() {
   return (
-    <div className="flex">
+    <div className="flex w-full">
       <LectureList />
       <Outlet />
     </div>

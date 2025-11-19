@@ -50,7 +50,7 @@ export function LectureList() {
   );
 
   return (
-    <div className="flex min-h-full w-96 flex-col border-r bg-muted">
+    <div className="flex min-h-full w-96 shrink-0 flex-col border-r bg-muted">
       <div className="border-b bg-card p-4">
         <div className="mb-3 flex items-center justify-between">
           <h2 className="font-semibold text-foreground">

@@ -7,6 +7,8 @@ import {
 } from "@tanstack/react-router";
 import { trpc } from "@/utils/trpc";
 import "../index.css";
+import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
+import { TanStackRouterDevtools } from "@tanstack/react-router-devtools";
 import { ThemeProvider } from "next-themes";
 import { AddSubjectDialog } from "@/components/add-subject-dialog";
 import { Header } from "@/components/header";
@@ -77,8 +79,8 @@ function RootComponent() {
           </div>
         </ToastProvider>
       </ThemeProvider>
-      {/*<TanStackRouterDevtools position="bottom-left" />*/}
-      {/*<ReactQueryDevtools buttonPosition="bottom-right" position="bottom" />*/}
+      <TanStackRouterDevtools position="bottom-left" />
+      <ReactQueryDevtools buttonPosition="bottom-right" position="bottom" />
     </>
   );
 }

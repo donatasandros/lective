@@ -1,5 +1,5 @@
 import { db } from "@lective/db";
-import { lecture } from "@lective/db/schema/index";
+import { lecture, note } from "@lective/db/schema/index";
 import { TRPCError } from "@trpc/server";
 import { eq } from "drizzle-orm";
 import z from "zod";
@@ -39,6 +39,11 @@ export const lectureRouter = router({
           message: "Failed to create lecture",
         });
       }
+
+      await db.insert(note).values({
+        content: "",
+        lectureId: createdLecture.id,
+      });
 
       return createdLecture;
     }),
